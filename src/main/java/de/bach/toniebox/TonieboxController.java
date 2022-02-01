@@ -61,8 +61,9 @@ public class TonieboxController {
         try {
             File folder = new File("tmp");
             File chapterFile = folder.listFiles()[0];
-            creativeTonie.uploadFile(chapterUpload.getChapterName(), chapterFile.getAbsolutePath()  );
+            creativeTonie.uploadFile(chapterUpload.getChapterName(), chapterFile.getAbsolutePath());
             creativeTonie.commit();
+            chapterFile.delete();
         } catch (IOException e) {
             e.printStackTrace();
         }
