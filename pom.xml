@@ -11,7 +11,7 @@
 	<groupId>de.bach.toniebox</groupId>
 	<artifactId>TonieboxController</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<name>TonieboxController</name>
 	<description>Controller for the toniebox</description>
 	<properties>

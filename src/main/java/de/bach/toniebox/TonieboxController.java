@@ -16,11 +16,13 @@ public class TonieboxController {
 
     @CrossOrigin
     @GetMapping("/getCreativeTonie")
-    public CreativeTonie getCreativeTonie() {
+    public CreativeTonie getCreativeTonie(@RequestHeader("Authorization") String auth) {
+        String email = auth.split(":")[0];
+        String password = auth.split(":")[1];
         TonieHandler tonieHandler = new TonieHandler();
         CreativeTonie creativeTonie = null;
         try {
-            tonieHandler.login(Constants.USERNAME, Constants.PASSWORD);
+            tonieHandler.login(email, password);
 
             // get all households you're in & select first one
             List<Household> households = tonieHandler.getHouseholds();
@@ -39,7 +41,7 @@ public class TonieboxController {
 
     @CrossOrigin
     @PostMapping("/uploadChapterToCreativeTonie")
-    public void uploadChapter(@RequestBody ChapterUpload chapterUpload) {
+    public void uploadChapter(@RequestHeader("Authorization") String auth, @RequestBody ChapterUpload chapterUpload) {
         YoutubeDLRequest request = new YoutubeDLRequest(chapterUpload.getChapterName(), "./tmp");
         request.setOption("extract-audio");
         request.setOption("audio-format","mp3");
@@ -57,7 +59,7 @@ public class TonieboxController {
             e.printStackTrace();
         }
 
-        CreativeTonie creativeTonie = getCreativeTonie();
+        CreativeTonie creativeTonie = getCreativeTonie(auth);
         try {
             File folder = new File("tmp");
             File chapterFile = folder.listFiles()[0];
@@ -70,8 +72,8 @@ public class TonieboxController {
     }
 
     @DeleteMapping("/deleteChapterFromCreativeTonie/{chapterName}")
-    public void deleteChapterFromCreativeTonie(@PathVariable String chapterName) {
-        CreativeTonie creativeTonie = getCreativeTonie();
+    public void deleteChapterFromCreativeTonie(@RequestHeader("Authorization") String auth, @PathVariable String chapterName) {
+        CreativeTonie creativeTonie = getCreativeTonie(auth);
         try {
             creativeTonie.deleteChapter(creativeTonie.findChapterByTitle(chapterName));
             creativeTonie.commit();
