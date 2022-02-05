@@ -2,6 +2,8 @@ package de.bach.toniebox;
 
 import de.bach.toniebox.model.ChapterUpload;
 import de.bach.toniebox.ytdlp.*;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
 import rocks.voss.toniebox.TonieHandler;
 import rocks.voss.toniebox.beans.toniebox.CreativeTonie;
@@ -9,6 +11,7 @@ import rocks.voss.toniebox.beans.toniebox.Household;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -17,6 +20,7 @@ public class TonieboxController {
     @CrossOrigin
     @GetMapping("/getCreativeTonie")
     public CreativeTonie getCreativeTonie(@RequestHeader("Authorization") String auth) {
+        System.out.println("getCreativeTonie()");
         String email = auth.split(":")[0];
         String password = auth.split(":")[1];
         TonieHandler tonieHandler = new TonieHandler();
@@ -42,37 +46,38 @@ public class TonieboxController {
     @CrossOrigin
     @PostMapping("/uploadChapterToCreativeTonie")
     public void uploadChapter(@RequestHeader("Authorization") String auth, @RequestBody ChapterUpload chapterUpload) {
-        YoutubeDLRequest request = new YoutubeDLRequest(chapterUpload.getChapterName(), "./tmp");
-        request.setOption("extract-audio");
-        request.setOption("audio-format","mp3");
-        request.setOption("default-search","ytsearch");
-        request.setOption("no-playlist");
-
+        System.out.println("uploadChapter()");
         try {
-            YoutubeDLResponse response = YoutubeDL.execute(request, new DownloadProgressCallback() {
-                @Override
-                public void onProgressUpdate(float progress, long etaInSeconds) {
-                    System.out.println(String.valueOf(progress) + "%");
-                }
-            });
-        } catch (YoutubeDLException e) {
-            e.printStackTrace();
-        }
+            Resource resource = new ClassPathResource("chapter/dummy.txt");
+            InputStream input = resource.getInputStream();
+            File file = resource.getFile();
+            File folder =  file.getParentFile();
 
-        CreativeTonie creativeTonie = getCreativeTonie(auth);
-        try {
-            File folder = new File("tmp");
-            File chapterFile = folder.listFiles()[0];
+            YoutubeDLRequest request = new YoutubeDLRequest(chapterUpload.getChapterName(), folder.getAbsolutePath());
+            request.setOption("extract-audio");
+            request.setOption("audio-format", "mp3");
+            request.setOption("default-search", "ytsearch");
+            request.setOption("no-playlist");
+            YoutubeDL.execute(request);
+
+            File chapterFile = folder.listFiles()[1];
+            CreativeTonie creativeTonie = getCreativeTonie(auth);
             creativeTonie.uploadFile(chapterUpload.getChapterName(), chapterFile.getAbsolutePath());
             creativeTonie.commit();
             chapterFile.delete();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (YoutubeDLException e) {
+            e.printStackTrace();
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 
+    @CrossOrigin
     @DeleteMapping("/deleteChapterFromCreativeTonie/{chapterName}")
     public void deleteChapterFromCreativeTonie(@RequestHeader("Authorization") String auth, @PathVariable String chapterName) {
+        System.out.println("deleteChapterFromCreativeTonie()");
         CreativeTonie creativeTonie = getCreativeTonie(auth);
         try {
             creativeTonie.deleteChapter(creativeTonie.findChapterByTitle(chapterName));

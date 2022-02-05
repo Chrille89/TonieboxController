@@ -32,13 +32,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>rocks.voss</groupId>
 			<artifactId>toniebox-api</artifactId>
 			<version>3.6</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>
