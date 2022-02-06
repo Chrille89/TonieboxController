@@ -9,6 +9,7 @@ import rocks.voss.toniebox.TonieHandler;
 import rocks.voss.toniebox.beans.toniebox.CreativeTonie;
 import rocks.voss.toniebox.beans.toniebox.Household;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +46,10 @@ public class TonieboxController {
 
     @CrossOrigin
     @PostMapping("/uploadChapterToCreativeTonie")
-    public void uploadChapter(@RequestHeader("Authorization") String auth, @RequestBody ChapterUpload chapterUpload) {
+    public void uploadChapter(
+            @RequestHeader("Authorization") String auth,
+            @RequestBody ChapterUpload chapterUpload,
+            HttpServletResponse response) {
         System.out.println("uploadChapter()");
         try {
             Resource resource = new ClassPathResource("chapter/dummy.txt");
@@ -59,6 +63,11 @@ public class TonieboxController {
             request.setOption("default-search", "ytsearch");
             request.setOption("no-playlist");
             YoutubeDL.execute(request);
+
+            if(folder.listFiles().length == 1) {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                return;
+            }
 
             File chapterFile = folder.listFiles()[1];
             CreativeTonie creativeTonie = getCreativeTonie(auth);
