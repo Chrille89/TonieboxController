@@ -13,10 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 @RestController
 public class TonieboxController {
+
+    private static final String tmpChapterFolderPath = "/home/toniebox/bettyblau";
 
     @CrossOrigin
     @GetMapping("/getCreativeTonie")
@@ -52,24 +55,20 @@ public class TonieboxController {
             HttpServletResponse response) {
         System.out.println("uploadChapter()");
         try {
-            Resource resource = new ClassPathResource("chapter/dummy.txt");
-            InputStream input = resource.getInputStream();
-            File file = resource.getFile();
-            File folder =  file.getParentFile();
-
-            YoutubeDLRequest request = new YoutubeDLRequest(chapterUpload.getChapterName(), folder.getAbsolutePath());
+            File tmpChapterFolder= new File(tmpChapterFolderPath);
+            YoutubeDLRequest request = new YoutubeDLRequest(chapterUpload.getChapterName(), tmpChapterFolder.getAbsolutePath());
             request.setOption("extract-audio");
             request.setOption("audio-format", "mp3");
             request.setOption("default-search", "ytsearch");
             request.setOption("no-playlist");
             YoutubeDL.execute(request);
 
-            if(folder.listFiles().length == 1) {
+            if(tmpChapterFolder.listFiles().length == 0) {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 return;
             }
 
-            File chapterFile = folder.listFiles()[1];
+            File chapterFile = tmpChapterFolder.listFiles()[0];
             CreativeTonie creativeTonie = getCreativeTonie(auth);
             creativeTonie.uploadFile(chapterUpload.getChapterName(), chapterFile.getAbsolutePath());
             creativeTonie.commit();
