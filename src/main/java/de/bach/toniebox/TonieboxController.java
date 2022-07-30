@@ -36,7 +36,7 @@ public class TonieboxController {
             List<Household> households = tonieHandler.getHouseholds();
             Household household = households.get(0);
 
-            // get all creative tonies & select first oneddd
+            // get all creative tonies & select first one
             List<CreativeTonie> creativeTonies = tonieHandler.getCreativeTonies(household);
             creativeTonie = creativeTonies.get(0);
 
