@@ -45,6 +45,12 @@
 			<artifactId>toniebox-api</artifactId>
 			<version>3.6</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.tomcat.maven/tomcat7-maven-plugin -->
+		<dependency>
+			<groupId>org.apache.tomcat.maven</groupId>
+			<artifactId>tomcat7-maven-plugin</artifactId>
+			<version>2.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -52,6 +58,18 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<!-- Configure the Tomcat Maven plugin -->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<url>https://tomcat-manager.skynet.berlin/manager/text</url>
+					<username>war-deployer</username>
+					<password>maven-tomcat-plugin</password>
+					<server>maven-tomcat-war-deployment-server</server>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

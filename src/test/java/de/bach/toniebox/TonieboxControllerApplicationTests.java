@@ -12,7 +12,7 @@ class TonieboxControllerApplicationTests {
 
 	@Autowired
 	TonieboxController controller;
-	
+
 	@Test
 	void contextLoads() {
 	}
@@ -27,5 +27,4 @@ class TonieboxControllerApplicationTests {
 				.exchange()
 				.expectStatus().is4xxClientError();
 	}
-
 }
