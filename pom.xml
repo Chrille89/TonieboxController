@@ -66,8 +66,8 @@
 				<version>2.2</version>
 				<configuration>
 					<url>https://tomcat-manager.skynet.berlin/manager/text</url>
-					<username>war-deployer</username>
-					<password>maven-tomcat-plugin</password>
+					<username>${war-deployer.username}</username>
+					<password>${maven-tomcat-plugin.password}</password>
 					<server>maven-tomcat-war-deployment-server</server>
 				</configuration>
 			</plugin>
